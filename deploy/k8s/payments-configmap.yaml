@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-config
+  namespace: demo-payments-service
+  labels:
+    app.kubernetes.io/name: payments-service
+    app.kubernetes.io/part-of: self-healing-demo
+data:
+  SERVICE_NAME: "payments-service"
+  TARGET_VERSION: "v2.0.0"
+  DB_HOST: "postgres-primary.internal"
+  DB_PORT: "5432"
+  DB_POOL_SIZE: "20"
+  RATE_LIMIT_RPS: "500"
+  ALLOW_PRIVILEGED_ACCESS: "false"
+  TIMEOUT_MS: "3000"
+  FEATURE_FLAGS_JSON: '{"circuit_breaker_enabled": true, "enable_retries": true, "max_retry_count": 3}'

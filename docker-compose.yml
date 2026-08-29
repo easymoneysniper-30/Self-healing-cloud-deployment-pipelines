@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # Self-Healing Pipeline Orchestrator & AI Control Center Dashboard
+  self-healing-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: self-healing-orchestrator
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-AQ.Ab8RN6IIPlj53uW87SKUOFl9pXf0sZGnTh1sMAS0qhnft33cAQ}
+      - LLM_MODEL=${LLM_MODEL:-gemini-3-flash-preview}
+      - TARGET_MODE=SIMULATED # Set to K8S for live Kubernetes cluster mode
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/status"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  # Optional Demo Payments Microservice Container
+  demo-payments-service:
+    image: python:3.13-slim
+    container_name: demo-payments-service
+    ports:
+      - "8080:8080"
+    command: >
+      python -c "
+      import http.server, socketserver
+      class H(http.server.SimpleHTTPRequestHandler):
+          def do_GET(self):
+              if self.path == '/health':
+                  self.send_response(200)
+                  self.end_headers()
+                  self.wfile.write(b'{\"status\":\"UP\",\"version\":\"v2.0.0\"}')
+              else:
+                  self.send_response(200)
+                  self.end_headers()
+                  self.wfile.write(b'{\"message\":\"Payments Service Live\"}')
+      socketserver.TCPServer(('', 8080), H).serve_forever()
+      "
+    restart: unless-stopped

@@ -1,0 +1,33 @@
+# Declared Reference Configuration (GitOps Source of Truth)
+# Application: payments-service
+apiVersion: apps/v1
+kind: ServiceConfig
+metadata:
+  name: payments-service
+  namespace: demo-payments-service
+  version: "v2.1.0"
+  git_commit: "a8f3b12"
+spec:
+  replicas: 3
+  port: 8080
+  environment:
+    ENV_NAME: "production"
+    LOG_LEVEL: "INFO"
+    DATABASE_URL: "postgresql://app_user:secure_pwd@db.internal:5432/payments_db"
+    CONNECTION_POOL_SIZE: "20"
+    REQUEST_TIMEOUT_MS: "3000"
+    ENABLE_DEBUG_MODE: "false"
+    ALLOW_PRIVILEGED_ACCESS: "false"
+  resources:
+    cpu_limit: "500m"
+    memory_limit: "512Mi"
+    cpu_request: "100m"
+    memory_request: "128Mi"
+  health_check:
+    path: "/health"
+    initial_delay_seconds: 5
+    period_seconds: 10
+    failure_threshold: 3
+  sla:
+    max_p95_latency_ms: 250.0
+    max_error_rate_percent: 1.0

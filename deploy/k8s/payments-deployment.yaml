@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-service
+  namespace: demo-payments-service
+  labels:
+    app.kubernetes.io/name: payments-service
+    app.kubernetes.io/part-of: self-healing-demo
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: payments-service
+  template:
+    metadata:
+      labels:
+        app: payments-service
+        version: v2.0.0
+    spec:
+      containers:
+        - name: payments-service
+          image: python:3.13-slim
+          imagePullPolicy: IfNotPresent
+          command:
+            - python
+            - -c
+            - |
+              import http.server, socketserver
+              class Handler(http.server.SimpleHTTPRequestHandler):
+                  def do_GET(self):
+                      if self.path == "/health":
+                          self.send_response(200)
+                          self.end_headers()
+                          self.wfile.write(b'{"status":"UP","version":"v2.0.0"}')
+                      else:
+                          self.send_response(200)
+                          self.end_headers()
+                          self.wfile.write(b'{"service":"payments-service","version":"v2.0.0"}')
+              socketserver.TCPServer(("", 8080), Handler).serve_forever()
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: payments-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2

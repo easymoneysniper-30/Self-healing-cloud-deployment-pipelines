@@ -1,0 +1,42 @@
+# Policy Engine Safety Configuration (PRD Section 12 & SR-1 to SR-11)
+version: "1.0"
+environment: "demonstrator-isolated"
+
+# Allowlisted automated actions (SR-4)
+allowlisted_actions:
+  - "ROLLBACK_DEPLOYMENT"
+  - "PATCH_CONFIG"
+  - "RESTART_POD_OR_SERVICE"
+
+# Confidence threshold for full autonomy (SR-3, SR-11)
+# Actions with confidence >= threshold are auto-executed; below threshold require human approval
+confidence_threshold: 0.80
+
+# Blast radius constraint (SR-7)
+allowed_namespaces:
+  - "demo-payments-service"
+  - "demo-checkout-service"
+  - "demo-auth-service"
+  - "payments-service"
+  - "checkout-service"
+  - "auth-service"
+
+# Rate limiting per target service (SR-10)
+rate_limit:
+  max_actions_per_window: 3
+  window_seconds: 120
+
+# Circuit breaker settings (SR-9)
+circuit_breaker:
+  consecutive_failure_threshold: 3
+  cooldown_seconds: 300
+
+# Post-repair verification (FR-7.6)
+post_repair_verification:
+  health_check_timeout_seconds: 30
+  retry_attempts: 2
+  required_healthy_probes: 2
+
+# Operational modes (SR-5)
+dry_run: false
+emergency_stop_active: false

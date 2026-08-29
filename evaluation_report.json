@@ -1,0 +1,69 @@
+{
+  "evaluation_timestamp": "2026-08-29T18:01:46.929422+00:00",
+  "summary": {
+    "total_scenarios_run": 4,
+    "detection_latency_avg_seconds": 0.02,
+    "diagnosis_accuracy_pct": 100.0,
+    "repair_success_rate_pct": 100.0,
+    "agentic_mttr_seconds": 0.093,
+    "baseline_mttr_seconds": 420.0,
+    "mttr_reduction_pct": 99.98,
+    "human_intervention_rate_pct": 25.0,
+    "false_positive_rate_pct": 0.0,
+    "chaos_experiment_safety_rate_pct": 100.0,
+    "scenario_results": [
+      {
+        "scenario_id": "SCN-01",
+        "name": "Defective Deployment Rollout (CrashLoopBackOff)",
+        "fault_type": "DEPLOYMENT_FAILURE",
+        "injected_root_cause": "Defective deployment artifact v2.2.0-broken",
+        "diagnosed_root_cause": "Defective deployment artifact or startup failure in version 'latest'.",
+        "is_diagnosis_correct": true,
+        "detection_latency_seconds": 0.012,
+        "recovery_time_seconds": 0.084,
+        "repair_success": true,
+        "human_intervention_required": false,
+        "baseline_recovery_time_seconds": 480.0
+      },
+      {
+        "scenario_id": "SCN-02",
+        "name": "Out-of-band Configuration Drift Reversion",
+        "fault_type": "CONFIGURATION_DRIFT",
+        "injected_root_cause": "Out-of-band runtime parameter modification",
+        "diagnosed_root_cause": "Out-of-band configuration drift (2 key(s) modified).",
+        "is_diagnosis_correct": true,
+        "detection_latency_seconds": 0.035,
+        "recovery_time_seconds": 0.105,
+        "repair_success": true,
+        "human_intervention_required": false,
+        "baseline_recovery_time_seconds": 360.0
+      },
+      {
+        "scenario_id": "SCN-03",
+        "name": "Post-Deployment Latency & Error Regression",
+        "fault_type": "PERFORMANCE_ANOMALY",
+        "injected_root_cause": "Post-deployment performance regression",
+        "diagnosed_root_cause": "Performance regression introduced by recent deployment rollout.",
+        "is_diagnosis_correct": true,
+        "detection_latency_seconds": 0.017,
+        "recovery_time_seconds": 0.082,
+        "repair_success": true,
+        "human_intervention_required": false,
+        "baseline_recovery_time_seconds": 540.0
+      },
+      {
+        "scenario_id": "SCN-04",
+        "name": "Ambiguous External Spike (HITL Approval Gate)",
+        "fault_type": "PERFORMANCE_ANOMALY",
+        "injected_root_cause": "External upstream load surge (No recent deploy)",
+        "diagnosed_root_cause": "External traffic surge or downstream infrastructure saturation.",
+        "is_diagnosis_correct": true,
+        "detection_latency_seconds": 0.017,
+        "recovery_time_seconds": 0.101,
+        "repair_success": true,
+        "human_intervention_required": true,
+        "baseline_recovery_time_seconds": 300.0
+      }
+    ]
+  }
+}
