@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Self-Healing Pipeline Orchestrator & AI Control Center Dashboard
   self-healing-agent:
