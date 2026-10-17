@@ -52,3 +52,5 @@ Thumbs.db
 # Temp scratch & system files
 scratch/
 .system_generated/
+others/
+
